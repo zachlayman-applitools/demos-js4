@@ -15,6 +15,15 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}/index.js"
+        },
+        {
+            "name": "Protractor",
+            "type": "node",
+            "request": "launch",
+            "program": "/usr/local/lib/node_modules/protractor/bin/protractor",
+            "args": [
+                "${workspaceRoot}/src/protractor/conf.js"
+            ]
         }
     ]
 }
