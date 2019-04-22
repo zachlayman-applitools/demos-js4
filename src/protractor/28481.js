@@ -1,37 +1,33 @@
-var SDK = require('@applitools/eyes-selenium');
-var swd = require('selenium-webdriver');
+'use strict';
 
-var eyes = new SDK.Eyes();
-var apiKey = process.env.APPLITOOLS_API_KEY;
-eyes.setApiKey(apiKey);
-
-eyes.setSaveNewTests(true);
-eyes.setBatch("28249");
-eyes.setMatchTimeout(20000);
-eyes.setForceFullPageScreenshot(true);
-eyes.setHideScrollbars(false);
-eyes.setStitchMode(SDK.StitchMode.CSS);
-// eyes.setMatchLevel(MatchLevel.Strict);
+require('chromedriver');
+const { Builder, Capabilities, By } = require('selenium-webdriver');
+const { Eyes, Target } = require('@applitools/eyes-selenium');
 
 it("28481", async (done) => {
-    try {
-        await browser.waitForAngularEnabled(false);
-        await browser.get("https://indystar.com/?tangent");
-        var q = browser.findElement(By.name('email'));
-        await q.sendKeys('test@xyz.com');
+    (async () => {
+        browser.quit();
+        const driver = new Builder()
+            .usingServer('http://localhost:4444/wd/hub')
+            .withCapabilities(Capabilities.chrome())
+            .build();
 
-        let viewportSize = { width: 1024, height: 768 };
-        await eyes.open(browser, "28481", "28481 Test", viewportSize);
+        const eyes = new Eyes();
+        eyes.setApiKey(process.env.APPLITOOLS_API_KEY);
 
-        await eyes.checkWindow();
+        try {
+            await eyes.open(driver, '28481', '28481 Test', { width: 1024, height: 768 });
 
-        await eyes.close(false);
-    }
-    finally {
-        await eyes.abortIfNotClosed();
-        await browser.close();
-    }
+            await driver.get('https://applitools.com/helloworld');
+            await eyes.check('Main Page', Target.window());
 
-    done();
+            await driver.findElement(By.css('button')).click();
+            await eyes.check('Click!', Target.window());
 
+            await eyes.close();
+        } finally {
+            await driver.quit();
+            await eyes.abortIfNotClosed();
+        }
+    })();
 });
