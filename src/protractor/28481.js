@@ -16,13 +16,11 @@ it("28481", async (done) => {
         eyes.setApiKey(process.env.APPLITOOLS_API_KEY);
 
         try {
-            await eyes.open(driver, '28481', '28481 Test', { width: 1024, height: 768 });
-
-            await driver.get('https://applitools.com/helloworld');
-            await eyes.check('Main Page', Target.window());
-
-            await driver.findElement(By.css('button')).click();
-            await eyes.check('Click!', Target.window());
+            await driver.get('https://indystar.com/?tangent');
+            let q = driver.findElement(By.className('gnt_m_nls_em'));
+            await q.sendKeys('test@xyz.com');
+            await eyes.open(driver, 'tangent', 'newsletter signup valid email address');
+            await eyes.check('viewport', Target.region(By.className('gnt_m_nls')));
 
             await eyes.close();
         } finally {
